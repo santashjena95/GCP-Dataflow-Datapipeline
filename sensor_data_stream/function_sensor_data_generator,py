@@ -1,0 +1,81 @@
+import random
+from datetime import datetime, timedelta
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
+from google.cloud import storage
+
+def generate_sensor_data(num_records, start_time, interval_seconds):
+    data = []
+    current_time = start_time
+
+    for _ in range(num_records):
+        temperature = round(random.uniform(20, 30), 2)  # Temperature in Celsius
+        humidity = round(random.uniform(30, 70), 2)  # Humidity in percentage
+        luminosity = round(random.uniform(100, 1000), 2)  # Luminosity in lux
+
+        data.append({
+            'timestamp': current_time.strftime("%Y-%m-%d %H:%M:%S"),
+            'temperature': temperature,
+            'humidity': humidity,
+            'luminosity': luminosity
+        })
+        current_time += timedelta(seconds=interval_seconds)
+
+    return data
+
+def create_xml(data):
+    root = ET.Element("sensor_data")
+
+    for reading in data:
+        record = ET.SubElement(root, "record")
+        
+        timestamp = ET.SubElement(record, "timestamp")
+        timestamp.text = reading['timestamp']
+        
+        temperature = ET.SubElement(record, "temperature")
+        temperature.text = str(reading['temperature'])
+        temperature.set("unit", "Celsius")
+        
+        humidity = ET.SubElement(record, "humidity")
+        humidity.text = str(reading['humidity'])
+        humidity.set("unit", "percent")
+        
+        luminosity = ET.SubElement(record, "luminosity")
+        luminosity.text = str(reading['luminosity'])
+        luminosity.set("unit", "lux")
+
+    return root
+
+def save_to_gcs(root, bucket, filename):
+    xml_string = ET.tostring(root).decode()
+    xml_pretty_str = minidom.parseString(xml_string).toprettyxml(indent="  ")
+    
+    storage_client = storage.Client()
+    output_bucket = storage_client.bucket(bucket)
+    blob = output_bucket.blob(filename)
+
+    with blob.open("w") as f:
+        f.write(xml_pretty_str)
+    
+    print(f"File {filename} uploaded to {bucket} GCS bucket")
+
+def sensor_data(data):
+  # Configuration
+  num_records = 5
+  start_time = datetime.now()
+  interval_seconds = 60  # 1 minute interval
+  dt = datetime.strptime(str(start_time), "%Y-%m-%d %H:%M:%S.%f")
+  converted_timestamp = dt.strftime("%Y_%m_%d_%H_%M_%S_%f")
+  output_file = 'sensor_data_'+converted_timestamp+'.xml'
+  output_bucket = 'sensor_data_input_demo'
+  # Generate data
+  sensor_data = generate_sensor_data(num_records, start_time, interval_seconds)
+
+  # Create XML structure
+  xml_root = create_xml(sensor_data)
+  
+  print(f"Generated {num_records} records of sensor data and saved to {output_file}")
+  # Save to XML file
+  save_to_gcs(xml_root, output_bucket, output_file)
+
+  return "Done"
