@@ -1,0 +1,6 @@
+apache_beam[gcp]
+google-cloud-bigquery
+xmltodict
+google-cloud-storage
+google-cloud-pubsub
+setuptools
