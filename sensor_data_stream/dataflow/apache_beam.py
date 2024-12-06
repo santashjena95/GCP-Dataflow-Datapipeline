@@ -104,7 +104,7 @@ def run():
         "--runner=DirectRunner",
         "--setup_file=./setup.py",
         "--region=us-central1",
-        "--enable_streaming_engine",
+        "--streaming",
         "--worker_region=us-central1",
         "--subnetwork=https://www.googleapis.com/compute/v1/projects/turnkey-cove-443706-t1/regions/us-central1/subnetworks/custom-subnet",
         "--service_account_email=225425778127-compute@developer.gserviceaccount.com"
