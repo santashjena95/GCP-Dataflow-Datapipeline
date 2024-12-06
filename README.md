@@ -15,3 +15,5 @@
 ## NOTE: when using --save_main_session don't keep any global variable or we can get error.
 
 ## NOTE: If we have multiple functions we have to use "--save_main_session" flag or we will get not found custom function error.
+
+## NOTE: Always make sure the worker is able to install the packages. We might need Cloud NAT for it.
