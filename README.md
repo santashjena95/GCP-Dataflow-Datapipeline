@@ -17,3 +17,5 @@
 ## NOTE: If we have multiple functions we have to use "--save_main_session" flag or we will get not found custom function error.
 
 ## NOTE: Always make sure the worker is able to install the packages. We might need Cloud NAT for it.
+
+## NOTE: If we get error related to beam.Pipeline not found then try to recreate the environment and remove [gcp] from requirements.txt and try with pip and python and not pip3 and python3
