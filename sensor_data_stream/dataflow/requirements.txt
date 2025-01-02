@@ -1,4 +1,4 @@
-apache_beam[gcp]
+apache_beam
 google-cloud-bigquery
 xmltodict
 google-cloud-storage
